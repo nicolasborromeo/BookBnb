@@ -60,4 +60,41 @@ const routes = require('./routes'); //import to add the routes
 app.use(routes) // connect all the routes
 
 
+//ERROR HANDLER 404
+//this first one created the error and forwards it to the middleware handler
+app.use((_req, _res, next) => {
+    const err = new Error("The requested resource couldn't be found.");
+    err.title = "Resource Not Found";
+    err.errors = { message: "The requested resource couldn't be found." };
+    err.status = 404;
+    next(err);
+});
+
+//Sequelize error-handler:
+//purpose: to catch sequelize errors and format them before sending the error response
+const { ValidationError } = require('sequelize');
+app.use((err, _req, _res, next) => {
+    if (err instanceof ValidationError) { //if true, this is a validation error from the sequelize package
+        let errors = {} //create errors object
+        for (let error of err.errors) { //add
+            errors[error.path] = error.message //path is the field that triggered the error. it's SETTING the KEY (err.path e.g. email:) VALUE (err.message = 'email bla bla') pairs inside the errors object that we just created to be sent in the repsonse
+        }
+        err.title = 'Validation error';
+        err.errors = errors //adds the object to the errors key of the error response
+    }
+    next(err);
+});
+
+//FINAL ERROR FORMATER and response
+app.use((err, _req, res, _next) => {
+    res.status(err.status || 500);
+    console.error(err);
+    res.json({
+        title: err.title || 'Internal Server Error',
+        message: err.message,
+        errors: err.errors,
+        stack: isProduction ? null : err.stack // isProduction = true? then set to null : else: send the stack trace only if we are in development
+    });
+});
+
 module.exports = app;
