@@ -60,4 +60,4 @@ const routes = require('./routes'); //import to add the routes
 app.use(routes) // connect all the routes
 
 
-module.exports = app
+module.exports = app;
