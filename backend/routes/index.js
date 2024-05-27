@@ -18,11 +18,11 @@ router.get('/api/csrf/restore', (req, res) => {
 });
 
 
-//immport the api/index.js and connect it to the router.
-
+//immport the api/index.js and connect it to the router. This middleware works by routing every '/api' url to the apihandler in the routes/api/index.js
 const apiRouter = require('./api');
-
 router.use('/api', apiRouter);
+
+
 
 
 module.exports = router
