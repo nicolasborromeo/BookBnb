@@ -19,7 +19,7 @@ const setTokenCookie = (res, user) => {
 
     //SYNTAX: jwt.sign(payload, secretOrPrivateKey, [options, callback])
     const token = jwt.sign( //THIS METHOD CREATES THE JWT TOKEN
-        { data: safeUser }, //this is the PAYLOAD (and because this is visibile it's important that no sensitive information like the hashedpassword is in here)
+        { data: safeUser }, //this is the PAYLOAD (and because this is visibile it's important that no sensitive information like the hashedpassword is in here) -- the "data" key is not necesarry unless we want to add more info to the payload
         secret, //the secret key from the .env made to SIGN the TOKEN
         { expiresIn: parseInt(expiresIn) } //604,800 seconds = 1 week //An object specifying additional options for the token, such as its expiration time (expiresIn), the algorithm used for signing (algorithm), issuer (issuer), audience (audience), and more.
     );
@@ -44,10 +44,10 @@ const setTokenCookie = (res, user) => {
 const restoreUser = (req, res, next) => {
     const { token } = req.cookies;
     req.user = null;
-    //jwt.verify(token, secretOrPublicKey, [options, callback])
+    //SYNTAX: jwt.verify(token, secretOrPublicKey, [options, callback])
     return jwt.verify(token, secret, null, async (err, jwtPayload) => {
         if (err) {
-            return next();
+            return next(err);
         }
         try {
             const { id } = jwtPayload.data;
@@ -58,7 +58,7 @@ const restoreUser = (req, res, next) => {
             });
         } catch (e) {
             res.clearCookie('token');
-            return next();
+            return next(e);
         }
 
         if (!req.user) res.clearCookie('token');
@@ -75,7 +75,7 @@ const restoreUser = (req, res, next) => {
 //if there is no current user, return an error
 //it will conect directly to route handleres where there needs to be a current user logged in for the actions in those routes
 
-const requireAuth = function (req, _res, next) {
+const requireAuth = function (req, res, next) {
     if(req.user) return next();
 
     const err = new Error('Authentication required');
@@ -85,6 +85,6 @@ const requireAuth = function (req, _res, next) {
     return next(err)
 }
 
-//exporting everyhitng
 
+//exporting everything
 module.exports = { setTokenCookie, restoreUser, requireAuth };
