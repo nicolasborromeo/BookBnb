@@ -6,7 +6,6 @@ const userRouter = require('./users.js')
 const { restoreUser, setTokenCookie } = require('../../utils/auth.js')
 
 // GET /api/set-token-cookie
-// const { setTokenCookie } = require('../../utils/auth.js');
 const { User } = require('../../db/models');
 router.get('/set-token-cookie', async (_req, res) => {
   const user = await User.findOne({

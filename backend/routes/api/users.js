@@ -7,23 +7,19 @@ const { setTokenCookie, requireAuth } = require('../../utils/auth');
 const { User } = require('../../db/models');
 
 
-router.post('/', async(req, res, next) => {
+router.post('/', async (req, res, next) => {
 
-    const {username, email, password} = req.body;
+    const { username, email, password } = req.body;
 
-    if(!username || !email || !password) {
+    if (!username || !email || !password) {
         const err = new Error('Invalid Signup');
         err.title = 'Invalid Sign Up';
         err.status = 401;
-        err.errors = {credentials: 'missing required information'};
+        err.errors = { credentials: 'missing required information' };
         return next(err)
     }
     const hashedPassword = bcrypt.hashSync(password)
-    const user = await User.create({
-       username,
-        email,
-        hashedPassword
-    })
+    const user = await User.create({ username, email, hashedPassword })
 
     const safeUser = {
         id: user.id,
