@@ -3,9 +3,20 @@
 const router = require('express').Router();
 const sessionRouter = require('./session.js')
 const userRouter = require('./users.js')
-const { restoreUser } = require('../../utils/auth.js')
+const { restoreUser, setTokenCookie } = require('../../utils/auth.js')
 
-
+// GET /api/set-token-cookie
+// const { setTokenCookie } = require('../../utils/auth.js');
+const { User } = require('../../db/models');
+router.get('/set-token-cookie', async (_req, res) => {
+  const user = await User.findOne({
+      where: {
+        username: 'Demo-lition'
+      }
+    });
+  setTokenCookie(res, user);
+  return res.json({ user });
+});
 
 router.use(restoreUser)
 

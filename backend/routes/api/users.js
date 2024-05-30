@@ -13,16 +13,16 @@ router.post('/', async(req, res, next) => {
 
     if(!username || !email || !password) {
         const err = new Error('Invalid Signup');
-        err.title = 'Invalid SignUp';
+        err.title = 'Invalid Sign Up';
         err.status = 401;
         err.errors = {credentials: 'missing required information'};
         return next(err)
     }
-    const hashedPass = bcrypt.hashSync(password)
+    const hashedPassword = bcrypt.hashSync(password)
     const user = await User.create({
-        username: username,
-        email: email,
-        hashedPassword: hashedPass
+       username,
+        email,
+        hashedPassword
     })
 
     const safeUser = {
@@ -31,7 +31,7 @@ router.post('/', async(req, res, next) => {
         username: user.username
     };
 
-    setTokenCookie(res, safeUser);
+    await setTokenCookie(res, safeUser);
 
     return res.status(200).json({
         message: `Succesfully created new user`,

@@ -7,6 +7,8 @@ const { Op } = require('sequelize')
 const { setTokenCookie, restoreUser } = require('../../utils/auth')
 
 
+
+
 router.post('/', async (req, res, next) => {
 
     const { credential, password } = req.body;
@@ -19,6 +21,7 @@ router.post('/', async (req, res, next) => {
             }
         }
     });
+    console.log('USER --->', user)
 
     if (!user || !bcrypt.compareSync(password, user.hashedPassword.toString())) {
         let error = new Error('Log In Failed');
@@ -34,7 +37,7 @@ router.post('/', async (req, res, next) => {
         username: user.username
     };
 
-    setTokenCookie(res, safeUser);
+    await setTokenCookie(res, safeUser);
 
     res.json({
         user: safeUser
@@ -47,5 +50,6 @@ router.delete('/', async (_req, res) => {
     res.clearCookie('token')
     res.json({ message: 'Succesfully Loged Out' })
 })
+
 
 module.exports = router

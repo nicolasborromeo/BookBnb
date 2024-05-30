@@ -47,7 +47,7 @@ const restoreUser = (req, res, next) => {
     //SYNTAX: jwt.verify(token, secretOrPublicKey, [options, callback])
     return jwt.verify(token, secret, null, async (err, jwtPayload) => {
         if (err) {
-            return next(err);
+            return next();
         }
         try {
             const { id } = jwtPayload.data;
