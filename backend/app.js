@@ -6,7 +6,6 @@ const morgan = require('morgan'); //to log in data from the requests: method, ur
 const cors = require('cors');
 const csurf = require('csurf');
 const helmet = require('helmet');
-
 const cookieParser = require('cookie-parser');
 
 const { enviroment } = require('./config');
