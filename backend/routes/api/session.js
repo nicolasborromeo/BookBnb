@@ -35,7 +35,6 @@ router.post('/', validateLogin, async (req, res, next) => {
             }
         }
     });
-    console.log('USER --->', user)
 
     if (!user || !bcrypt.compareSync(password, user.hashedPassword.toString())) {
         let error = new Error('Log In Failed');
@@ -51,13 +50,17 @@ router.post('/', validateLogin, async (req, res, next) => {
         username: user.username
     };
 
-    await setTokenCookie(res, safeUser);
+    setTokenCookie(res, safeUser);
 
     res.json({
         user: safeUser
     });
 });
 
+
+router.get('/', restoreUser, async (req, res, _next) => {
+    res.json(req.user)
+})
 
 
 router.delete('/', async (_req, res) => {
