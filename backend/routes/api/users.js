@@ -25,6 +25,16 @@ const validateSignup = [
       .exists({ checkFalsy: true })
       .isLength({ min: 6 })
       .withMessage('Password must be 6 characters or more.'),
+    check('firstName')
+      .exists()
+      .notEmpty()
+      .isLength({min: 2})
+      .withMessage('Please provide a first name with at least 2 characters.'),
+    check('lastName')
+      .exists()
+      .notEmpty()
+      .isLength({min: 2})
+      .withMessage('Please provide a last name with at least 2 characters.'),
     handleValidationErrors
   ];
 
@@ -32,9 +42,9 @@ const validateSignup = [
 router.post(
     '/',
     validateSignup,
-    async (req, res, next) => {
+    async (req, res) => {
 
-    const { username, email, password } = req.body;
+    const { username, email, password, firstName, lastName } = req.body;
 
     // if (!username || !email || !password) {
     //     const err = new Error('Invalid Signup');
@@ -44,15 +54,17 @@ router.post(
     //     return next(err)
     // }
     const hashedPassword = bcrypt.hashSync(password)
-    const user = await User.create({ username, email, hashedPassword })
+    const user = await User.create({ username, email, hashedPassword, firstName, lastName })
 
     const safeUser = {
         id: user.id,
         email: user.email,
-        username: user.username
+        username: user.username,
+        firstName: user.firstName,
+        lastName: user.lastName
     };
 
-    await setTokenCookie(res, safeUser);
+    setTokenCookie(res, safeUser);
 
     return res.status(200).json({
         message: `Succesfully created new user`,
