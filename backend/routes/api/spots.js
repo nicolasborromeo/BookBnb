@@ -167,6 +167,13 @@ const validateSpot = [
     body("price")
         .exists()
         .notEmpty()
+        .isNumeric().withMessage('Price must be a number')
+        .custom(value => {
+            if (value < 0) {
+                throw new Error()
+            }
+            return true
+        })
         .withMessage("Price per day must be a positive number"),
     handleValidationErrors
 ]
@@ -204,5 +211,32 @@ router.post('/:spotId/images',
         return res.status(201).json(imageRes)
     })
 
+//edit spot
+router.put('/:spotId',
+    restoreUser,
+    requireAuth,
+    spotAuthentication,
+    validateSpot,
+    async (req, res, next) => {
+        const id = req.params.spotId
+        const { address, city, state, country, lat, lng, name, description, price } = req.body
+        //get spot
+        let spot = await Spot.findByPk(id)
+        //if no spot - error
+        if (!spot) {
+            let err = new Error()
+            err.status = 404
+            err.message = "Spot couldn't be found"
+        }
+        //update
+        await Spot.update({
+            address, city, state, country, lat, lng, name, description, price
+        }, {
+            where: {
+                id: id
+            }
+        })
 
+        res.status(200).json(await Spot.findByPk(id))
+    })
 module.exports = router
