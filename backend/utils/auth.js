@@ -87,7 +87,7 @@ const requireAuth = function (req, res, next) {
 }
 
 
-const spotAuthorization = async (req, _res, next) => {
+const spotAuthentication = async (req, _res, next) => {
     const { Spot } = require('../db/models')
     //find the user id
     const userId = req.user.id
@@ -112,4 +112,4 @@ const spotAuthorization = async (req, _res, next) => {
 }
 
 //exporting everything
-module.exports = { setTokenCookie, restoreUser, requireAuth, spotAuthorization };
+module.exports = { setTokenCookie, restoreUser, requireAuth, spotAuthentication };

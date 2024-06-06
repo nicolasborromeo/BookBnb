@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router()
 
 const { Spot, SpotImage, Review, User } = require('../../db/models');
-const { restoreUser, requireAuth, spotAuthorization } = require('../../utils/auth');
+const { restoreUser, requireAuth, spotAuthentication } = require('../../utils/auth');
 const { handleValidationErrors } = require('../../utils/validation')
 const { check, body } = require('express-validator')
 
@@ -187,11 +187,11 @@ router.post('/',
 router.post('/:spotId/images',
     restoreUser,
     requireAuth,
-    spotAuthorization,
+    spotAuthentication,
     body("url").isURL().withMessage("Image must have a valid url"),
     handleValidationErrors,
     async (req, res, next) => {
-        
+
         const newImage = await SpotImage.create({
             spotId: req.params.spotId,
             url: req.body.url,
