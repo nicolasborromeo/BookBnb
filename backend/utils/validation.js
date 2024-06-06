@@ -1,15 +1,20 @@
 const { validationResult } = require('express-validator') //import the validationResult function to analyze the request
 // console.log('validationResult =======================================', validationResult)
 
+const { User } = require('../db/models')
+// const { use } = require('../routes/api/session')
+
 const handleValidationErrors = (req, res, next) => {
 
     const validationErrors = validationResult(req) //use it here, passing in the request
     // console.log('validationErrors =======================================', validationErrors)
 
-
     if (!validationErrors.isEmpty()) { //if there are any errors, format and send them tothe next error handler
         const errors = {}
-        validationErrors.array().forEach(error => errors[error.param] = error.msg);
+        validationErrors.array().forEach(error => {
+            console.log(error)
+            errors[error.path] = error.msg
+        });
         const err = new Error('Bad request.')
         err.errors = errors
         err.status = 400
@@ -19,5 +24,24 @@ const handleValidationErrors = (req, res, next) => {
     next() //else continue
 }
 
+const userExists = async (req, res, next) => {
+    const {email, username} = req.body
+    const {Op} = require('sequelize')
+    const errors = {}
+    let activeEmail = await User.findOne({where: {email: email}});
+    if(activeEmail) errors.email = 'email already exists'
+    let activeUsername = await User.findOne({where: {username: username}});
+    if(activeUsername) errors.username = 'username already exists'
 
-module.exports = { handleValidationErrors} //export the function
+    if(activeEmail || activeUsername) {
+        let err = new Error
+        err.status = 500
+        err.message = 'User already exists'
+        err.errors = errors
+        return next(err)
+    }
+
+    return next()
+}
+
+module.exports = { handleValidationErrors, userExists} //export the functions

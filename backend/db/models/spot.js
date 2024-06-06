@@ -35,28 +35,36 @@ module.exports = (sequelize, DataTypes) => {
     },
     address: {
       type: DataTypes.STRING,
+      allowNull: false
     },
     city: {
       type: DataTypes.STRING,
+      allowNull: false
     },
     state: {
       type: DataTypes.STRING,
+      allowNull: false
     },
     country: {
       type: DataTypes.STRING,
+      allowNull: false
     },
     lat:
     {
       type: DataTypes.FLOAT,
       validate: {
-        isFloat: true
+        isFloat: true,
+        min: -90,
+        max: 90
       }
     },
     lng:
     {
       type: DataTypes.FLOAT,
       validate: {
-        isFloat: true
+        isFloat: true,
+        min: -180,
+        max: 180
       }
     },
     name: {
@@ -69,7 +77,12 @@ module.exports = (sequelize, DataTypes) => {
     },
     price:
     {
-      type: DataTypes.FLOAT
+      type: DataTypes.FLOAT,
+      allowNull: false,
+      validate: {
+        isFloat: true,
+        min: 0
+      }
     }
   }, {
     sequelize,

@@ -37,6 +37,36 @@ const reviews = [
     userId: 1,
     review: 'Good value for money, would stay again.',
     stars: 4
+  },
+  {
+    spotId: 1,
+    userId: 2,
+    review: 'The view was breathtaking but the host was not responsive. We had issues with the hot water and wifi.',
+    stars: 2
+  },
+  {
+    spotId: 2,
+    userId: 3,
+    review: 'Comfortable and cozy, but could use better soundproofing.',
+    stars: 4
+  },
+  {
+    spotId: 3,
+    userId: 2,
+    review: 'A pleasant stay overall, though the WiFi was a bit spotty.',
+    stars: 3
+  },
+  {
+    spotId: 4,
+    userId: 1,
+    review: 'Spacious and modern, perfect for a family vacation.',
+    stars: 4
+  },
+  {
+    spotId: 5,
+    userId: 1,
+    review: 'Affordable and clean, with a friendly host.',
+    stars: 4
   }
 ];
 
