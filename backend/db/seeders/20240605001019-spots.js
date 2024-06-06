@@ -3,7 +3,8 @@
 const { Spot } = require('../models')
 
 const spots = [
-  { id: 1,
+  {
+    id: 1,
     ownerId: 1,
     address: '123 Main St',
     city: 'San Francisco',
@@ -15,7 +16,8 @@ const spots = [
     description: 'A cozy and modern apartment in the heart of San Francisco.',
     price: 150.00
   },
-  { id: 2,
+  {
+    id: 2,
     ownerId: 2,
     address: '456 Elm St',
     city: 'Los Angeles',
@@ -27,7 +29,8 @@ const spots = [
     description: 'A luxurious condo with a beautiful view of Los Angeles.',
     price: 250.00
   },
-  { id: 3,
+  {
+    id: 3,
     ownerId: 3,
     address: '789 Maple Ave',
     city: 'New York',
@@ -39,7 +42,8 @@ const spots = [
     description: 'A modern loft in the vibrant city of New York.',
     price: 300.00
   },
-  { id: 4,
+  {
+    id: 4,
     ownerId: 1,
     address: '101 Pine St',
     city: 'Seattle',
@@ -51,7 +55,8 @@ const spots = [
     description: 'A charming house located in the beautiful city of Seattle.',
     price: 200.00
   },
-  { id: 5,
+  {
+    id: 5,
     ownerId: 2,
     address: '202 Oak St',
     city: 'Austin',
