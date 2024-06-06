@@ -32,7 +32,15 @@ const formatter = (spots) => {
 
     return spotsList
 }
-
+//to check is the spot exsists lese throw error
+const _spotExists = (spot) => {
+    if (!spot) {
+        let err = new Error()
+        err.status = 404
+        err.message = "Spot couldn't be found"
+        return next(err)
+    }
+}
 //get all spots
 router.get('/', async (_req, res, _next) => {
 
@@ -227,6 +235,7 @@ router.put('/:spotId',
             let err = new Error()
             err.status = 404
             err.message = "Spot couldn't be found"
+            return next(err)
         }
         //update
         await Spot.update({
@@ -239,4 +248,22 @@ router.put('/:spotId',
 
         res.status(200).json(await Spot.findByPk(id))
     });
-module.exports = router
+
+
+//delete spot
+router.delete('/:spotId',
+    restoreUser,
+    requireAuth,
+    spotAuthentication,
+    async(req,res,next) => {
+        const id = req.params.spotId
+        let spot = await Spot.findByPk(id)
+        _spotExists(spot)
+        await Spot.destroy({
+            where: {id : id}
+        })
+        res.status(200).json('Successfully deleted')
+    }
+)
+
+    module.exports = router
