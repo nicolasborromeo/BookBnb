@@ -238,5 +238,5 @@ router.put('/:spotId',
         })
 
         res.status(200).json(await Spot.findByPk(id))
-    })
+    });
 module.exports = router

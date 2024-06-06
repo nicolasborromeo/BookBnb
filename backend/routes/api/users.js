@@ -64,7 +64,11 @@ router.post(
         message: `Succesfully created a new user`,
         user: safeUser
     })
-})
+});
+
+router.get('/', async (req,res,next)=> {
+  res.json(await User.findAll())
+});
 
 
 module.exports = router
