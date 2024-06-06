@@ -4,11 +4,12 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 
 const { check } = require('express-validator')
-const { handleValidationErrors } = require('../../utils/validation')
-const { setTokenCookie, requireAuth } = require('../../utils/auth');
+const { handleValidationErrors, userExists } = require('../../utils/validation')
+const { setTokenCookie, requireAuth, restoreUser } = require('../../utils/auth');
 const { User } = require('../../db/models');
 
 const validateSignup = [
+    userExists,
     check('email')
       .exists({ checkFalsy: true })
       .isEmail()
@@ -59,7 +60,7 @@ router.post(
 
     setTokenCookie(res, safeUser);
 
-    return res.status(200).json({
+    return res.status(201).json({
         message: `Succesfully created a new user`,
         user: safeUser
     })

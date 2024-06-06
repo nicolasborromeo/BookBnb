@@ -29,16 +29,17 @@ router.post('/', validateLogin, async (req, res, next) => {
 
     const user = await User.unscoped().findOne({
         where: {
-            [Op.or]: {
-                username: credential,
-                email: credential
-            }
+            [Op.or]: [
+                {username: credential},
+                {email: credential}
+            ]
         }
     });
 
     if (!user || !bcrypt.compareSync(password, user.hashedPassword.toString())) {
         let error = new Error('Log In Failed');
         error.title = 'Login failed';
+        error.message = 'Invalid Credentials'
         error.status = 401;
         error.errors = { credentials: 'The provided credentials were invalid.' }
         return next(error)
@@ -59,7 +60,7 @@ router.post('/', validateLogin, async (req, res, next) => {
 
 
 router.get('/', restoreUser, async (req, res, _next) => {
-    res.json(req.user)
+    res.status(200).json(req.user)
 })
 
 

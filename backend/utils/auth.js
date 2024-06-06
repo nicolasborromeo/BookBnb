@@ -15,7 +15,7 @@ const setTokenCookie = (res, user) => {
         id: user.id,
         email: user.email,
         username: user.username,
-      };
+    };
 
     //SYNTAX: jwt.sign(payload, secretOrPrivateKey, [options, callback])
     const token = jwt.sign( //THIS METHOD CREATES THE JWT TOKEN
@@ -54,7 +54,7 @@ const restoreUser = (req, res, next) => {
 
             req.user = await User.findByPk(id, {
                 attributes: {
-                    include: ['email', 'firstName', 'lastName', 'createdAt', 'updatedAt']
+                    include: ['email', 'firstName', 'lastName'] //'createdAt', 'updatedAt'
                 }
             });
         } catch (e) {
@@ -77,15 +77,39 @@ const restoreUser = (req, res, next) => {
 //it will conect directly to route handleres where there needs to be a current user logged in for the actions in those routes
 
 const requireAuth = function (req, res, next) {
-    if(req.user) return next();
+    if (req.user) return next();
 
     const err = new Error('Authentication required');
     err.title = 'Authentication required';
-    err.errors = { message: 'Authentication required'};
+    err.errors = { message: 'Authentication required' };
     err.status = 401;
     return next(err)
 }
 
 
+const spotAuthentication = async (req, _res, next) => {
+    const { Spot } = require('../db/models')
+    //find the user id
+    const userId = req.user.id
+    //find spot's owner id
+    let spot = await Spot.findByPk(req.params.spotId)
+    //check for existing spot
+    if (!spot) {
+        let err = new Error()
+        err.status = 404,
+        err.message = "Spot couldn't be found"
+        return next(err)
+    }
+    //compare
+    if (userId !== spot.ownerId) {
+        let err = new Error()
+        err.status = 403
+        err.message = "Forbidden"
+        return next(err)
+    }
+    // req.spotId = spot.id -- YOU CAN ADD THE SPOT TO THE REQ IF NEEDED
+    return next()
+}
+
 //exporting everything
-module.exports = { setTokenCookie, restoreUser, requireAuth };
+module.exports = { setTokenCookie, restoreUser, requireAuth, spotAuthentication };
