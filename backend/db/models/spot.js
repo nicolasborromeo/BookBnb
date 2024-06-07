@@ -1,4 +1,4 @@
- 'use strict'
+'use strict'
 
 const {
   Model
@@ -11,10 +11,10 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Spot.belongsTo(models.User, {foreignKey:'ownerId'});
-      Spot.hasMany(models.SpotImage, {foreignKey:'spotId', onDelete: 'CASCADE'});
-      Spot.hasMany(models.Review, {foreignKey: 'spotId', onDelete: 'CASCADE'});
-      Spot.hasMany(models.Booking, {foreignKey: 'spotId', onDelete: 'CASCADE'});
+      Spot.belongsTo(models.User, { foreignKey: 'ownerId', onDelete: 'CASCADE' });
+      Spot.hasMany(models.SpotImage, { foreignKey: 'spotId', onDelete: 'CASCADE' });
+      Spot.hasMany(models.Review, { foreignKey: 'spotId', onDelete: 'CASCADE' });
+      Spot.hasMany(models.Booking, { foreignKey: 'spotId', onDelete: 'CASCADE' });
 
     }
   }
@@ -49,18 +49,18 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    lat:
-    {
+    lat: {
       type: DataTypes.FLOAT,
+      allowNull: false,
       validate: {
         isFloat: true,
         min: -90,
         max: 90
       }
     },
-    lng:
-    {
+    lng: {
       type: DataTypes.FLOAT,
+      allowNull: false,
       validate: {
         isFloat: true,
         min: -180,
@@ -75,8 +75,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    price:
-    {
+    price: {
       type: DataTypes.FLOAT,
       allowNull: false,
       validate: {

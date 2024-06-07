@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router()
 
-const { Spot, SpotImage, Review, User } = require('../../db/models');
+const { Spot, SpotImage, Review, User, Booking } = require('../../db/models');
 const { restoreUser, requireAuth, spotAuthentication } = require('../../utils/auth');
 const { handleValidationErrors } = require('../../utils/validation')
 const { check, body } = require('express-validator')
@@ -32,7 +32,15 @@ const formatter = (spots) => {
 
     return spotsList
 }
-
+// //to check is the spot exsists lese throw error
+// const _spotExists = (spot) => {
+//     if (!spot) {
+//         let err = new Error()
+//         err.status = 404
+//         err.message = "Spot couldn't be found"
+//         return next(err)
+//     }
+// }
 //get all spots
 router.get('/', async (_req, res, _next) => {
 
@@ -54,7 +62,7 @@ router.get('/', async (_req, res, _next) => {
 })
 
 //get all spots owner by current user
-router.get('/current', restoreUser, requireAuth, async (req, res, next) => {
+router.get('/current', requireAuth, async (req, res, next) => {
 
     let userSpots = await Spot.findAll({
         where: { ownerId: req.user.id },
@@ -178,7 +186,6 @@ const validateSpot = [
     handleValidationErrors
 ]
 router.post('/',
-    restoreUser,
     requireAuth,
     validateSpot,
     async (req, res, next) => {
@@ -192,7 +199,6 @@ router.post('/',
 
 //add image to spot based on spot id
 router.post('/:spotId/images',
-    restoreUser,
     requireAuth,
     spotAuthentication,
     body("url").isURL().withMessage("Image must have a valid url"),
@@ -213,7 +219,6 @@ router.post('/:spotId/images',
 
 //edit spot
 router.put('/:spotId',
-    restoreUser,
     requireAuth,
     spotAuthentication,
     validateSpot,
@@ -222,12 +227,6 @@ router.put('/:spotId',
         const { address, city, state, country, lat, lng, name, description, price } = req.body
         //get spot
         let spot = await Spot.findByPk(id)
-        //if no spot - error
-        if (!spot) {
-            let err = new Error()
-            err.status = 404
-            err.message = "Spot couldn't be found"
-        }
         //update
         await Spot.update({
             address, city, state, country, lat, lng, name, description, price
@@ -239,4 +238,17 @@ router.put('/:spotId',
 
         res.status(200).json(await Spot.findByPk(id))
     });
+
+//delete spot
+router.delete('/:spotId',
+    requireAuth,
+    spotAuthentication,
+    async (req, res, next) => {
+        const id = req.params.spotId
+        await Spot.destroy({
+            where: { id: id }
+        })
+        res.status(200).json('Successfully deleted')
+    });
+
 module.exports = router
