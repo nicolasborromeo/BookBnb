@@ -62,7 +62,7 @@ router.get('/', async (_req, res, _next) => {
 })
 
 //get all spots owner by current user
-router.get('/current', restoreUser, requireAuth, async (req, res, next) => {
+router.get('/current', requireAuth, async (req, res, next) => {
 
     let userSpots = await Spot.findAll({
         where: { ownerId: req.user.id },
@@ -186,7 +186,6 @@ const validateSpot = [
     handleValidationErrors
 ]
 router.post('/',
-    restoreUser,
     requireAuth,
     validateSpot,
     async (req, res, next) => {
@@ -200,7 +199,6 @@ router.post('/',
 
 //add image to spot based on spot id
 router.post('/:spotId/images',
-    restoreUser,
     requireAuth,
     spotAuthentication,
     body("url").isURL().withMessage("Image must have a valid url"),
@@ -221,7 +219,6 @@ router.post('/:spotId/images',
 
 //edit spot
 router.put('/:spotId',
-    restoreUser,
     requireAuth,
     spotAuthentication,
     validateSpot,
@@ -245,20 +242,13 @@ router.put('/:spotId',
 
 //delete spot
 router.delete('/:spotId',
-    restoreUser,
     requireAuth,
     spotAuthentication,
     async (req, res, next) => {
         const id = req.params.spotId
-        let spot = await Spot.findByPk(id)
-
-        // await Booking.destroy({ where: { spotId: id } });
-        await Review.destroy({ where: { spotId: id } });
-        // await SpotImage.destroy({ where: { spotId: id } });
-
-        // await Spot.destroy({
-        //     where: { id: id }
-        // })
+        await Spot.destroy({
+            where: { id: id }
+        })
         res.status(200).json('Successfully deleted')
     }
 )
