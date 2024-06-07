@@ -250,8 +250,7 @@ router.delete('/:spotId',
             where: { id: id }
         })
         res.status(200).json('Successfully deleted')
-    }
-)
+    });
 
 
 module.exports = router
