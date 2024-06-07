@@ -239,7 +239,6 @@ router.put('/:spotId',
         res.status(200).json(await Spot.findByPk(id))
     });
 
-
 //delete spot
 router.delete('/:spotId',
     requireAuth,
@@ -251,6 +250,5 @@ router.delete('/:spotId',
         })
         res.status(200).json('Successfully deleted')
     });
-
 
 module.exports = router
