@@ -101,7 +101,7 @@ const spotAuthentication = async (req, _res, next) => {
         return next(err)
     }
     //compare
-    if (userId !== spot.ownerId) {
+    if (req.user.id !== spot.ownerId) {
         let err = new Error()
         err.status = 403
         err.message = "Forbidden"

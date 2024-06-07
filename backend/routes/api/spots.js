@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router()
 
-const { Spot, SpotImage, Review, User } = require('../../db/models');
+const { Spot, SpotImage, Review, User, Booking } = require('../../db/models');
 const { restoreUser, requireAuth, spotAuthentication } = require('../../utils/auth');
 const { handleValidationErrors } = require('../../utils/validation')
 const { check, body } = require('express-validator')
@@ -32,15 +32,15 @@ const formatter = (spots) => {
 
     return spotsList
 }
-//to check is the spot exsists lese throw error
-const _spotExists = (spot) => {
-    if (!spot) {
-        let err = new Error()
-        err.status = 404
-        err.message = "Spot couldn't be found"
-        return next(err)
-    }
-}
+// //to check is the spot exsists lese throw error
+// const _spotExists = (spot) => {
+//     if (!spot) {
+//         let err = new Error()
+//         err.status = 404
+//         err.message = "Spot couldn't be found"
+//         return next(err)
+//     }
+// }
 //get all spots
 router.get('/', async (_req, res, _next) => {
 
@@ -230,13 +230,6 @@ router.put('/:spotId',
         const { address, city, state, country, lat, lng, name, description, price } = req.body
         //get spot
         let spot = await Spot.findByPk(id)
-        //if no spot - error
-        if (!spot) {
-            let err = new Error()
-            err.status = 404
-            err.message = "Spot couldn't be found"
-            return next(err)
-        }
         //update
         await Spot.update({
             address, city, state, country, lat, lng, name, description, price
@@ -255,15 +248,20 @@ router.delete('/:spotId',
     restoreUser,
     requireAuth,
     spotAuthentication,
-    async(req,res,next) => {
+    async (req, res, next) => {
         const id = req.params.spotId
         let spot = await Spot.findByPk(id)
-        _spotExists(spot)
-        await Spot.destroy({
-            where: {id : id}
-        })
+
+        // await Booking.destroy({ where: { spotId: id } });
+        await Review.destroy({ where: { spotId: id } });
+        // await SpotImage.destroy({ where: { spotId: id } });
+
+        // await Spot.destroy({
+        //     where: { id: id }
+        // })
         res.status(200).json('Successfully deleted')
     }
 )
 
-    module.exports = router
+
+module.exports = router
