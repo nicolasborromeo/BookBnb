@@ -6,7 +6,7 @@ const userRouter = require('./users.js')
 const spotsRouter = require('./spots.js')
 const reviewsRouter = require('./reviews.js')
 
-const { restoreUser, setTokenCookie } = require('../../utils/auth.js')
+const { restoreUser } = require('../../utils/auth.js')
 
 // GET /api/set-token-cookie
 // const { User } = require('../../db/models');

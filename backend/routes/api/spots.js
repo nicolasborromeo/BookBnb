@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router()
 
-const { Spot, SpotImage, Review, User, Booking } = require('../../db/models');
+const { Spot, SpotImage, Review, User, ReviewImage, Booking } = require('../../db/models');
 const { restoreUser, requireAuth, spotAuthentication } = require('../../utils/auth');
 const { handleValidationErrors } = require('../../utils/validation')
 const { check, body } = require('express-validator')
 
-//helper function to format responses
+
 const formatter = (spots) => {
     let spotsList = []
     spots.forEach(spot => {
@@ -32,15 +32,98 @@ const formatter = (spots) => {
 
     return spotsList
 }
-// //to check is the spot exsists lese throw error
-// const _spotExists = (spot) => {
-//     if (!spot) {
-//         let err = new Error()
-//         err.status = 404
-//         err.message = "Spot couldn't be found"
-//         return next(err)
-//     }
-// }
+const _spotExists = async (req, res, next) => {
+    let spotId = req.params.spotId
+    let spot = await Spot.findByPk(spotId)
+    if (!spot) {
+        let err = new Error()
+        err.status = 404
+        err.message = "Spot couldn't be found"
+        return next(err)
+    }
+    return next()
+}
+const _checkDupicate = async (req, res, next) => {
+    const { Op } = require('sequelize')
+    let userId = req.user.id
+    let spotId = req.params.spotId
+    let checkReview = await Review.findOne({
+        where: {
+            [Op.and]: [
+                { spotId: spotId },
+                { userId: userId }
+            ]
+        }
+    })
+    if (checkReview) {
+        let err = new Error('Review already exists')
+        err.status = 500;
+        err.message = "User already has a review for this spot"
+        return next(err)
+    } else return next()
+}
+const validateReview = [
+    body('review')
+        .exists()
+        .notEmpty()
+        .withMessage("Review text is required"),
+    body('stars')
+        .exists()
+        .notEmpty()
+        .isInt()
+        .custom(value => {
+            if (value < 1 || value > 5) {
+                throw new Error()
+            }
+            return true
+        })
+        .withMessage("Stars must be an integer from 1 to 5"),
+    handleValidationErrors
+]
+
+
+
+
+router.post('/:spotId/reviews',
+    requireAuth,
+    _spotExists,
+    _checkDupicate,
+    validateReview,
+    async (req, res, next) => {
+        const spotId = req.params.spotId;
+
+        const { review, stars } = req.body
+        let newReview = await Review.create({
+            spotId: spotId,
+            userId: req.user.id,
+            review: review,
+            stars: stars
+        })
+
+        res.status(201).json(newReview)
+    })
+
+router.get('/:spotId/reviews',
+    _spotExists,
+    async (req, res, next) => {
+        const spotId = req.params.spotId
+
+        let spotReviews = await Review.findAll({
+            where: { spotId: spotId },
+            include: [
+                {
+                    model: User,
+                    attributes: ['id', 'firstName', 'lastName']
+                },
+                {
+                    model: ReviewImage,
+                    attributes: ['id', 'url']
+                }]
+        })
+
+        res.status(200).json({ Reviews: spotReviews })
+    })
+
 //get all spots
 router.get('/', async (_req, res, _next) => {
 
