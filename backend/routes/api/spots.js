@@ -5,6 +5,7 @@ const { Spot, SpotImage, Review, User, ReviewImage, Booking } = require('../../d
 const { restoreUser, requireAuth, spotAuthentication } = require('../../utils/auth');
 const { handleValidationErrors } = require('../../utils/validation')
 const { check, body } = require('express-validator')
+const { Op } = require('sequelize')
 
 
 const formatter = (spots) => {
@@ -125,10 +126,13 @@ router.get('/:spotId/reviews',
     })
 
 //get all spots
-router.get('/', async (_req, res, _next) => {
+router.get('/', async (req, res, _next) => {
+    const query = req.query
+    console.log(query)
+    let where = {}
 
     let spots = await Spot.findAll({
-
+        where: where,
         include: [
             {
                 model: SpotImage,
@@ -145,7 +149,7 @@ router.get('/', async (_req, res, _next) => {
 })
 
 //get all spots owner by current user
-router.get('/current', requireAuth, async (req, res, next) => {
+router.get('/current', restoreUser, requireAuth, async (req, res, next) => {
 
     let userSpots = await Spot.findAll({
         where: { ownerId: req.user.id },
@@ -268,17 +272,6 @@ const validateSpot = [
         .withMessage("Price per day must be a positive number"),
     handleValidationErrors
 ]
-router.post('/',
-    requireAuth,
-    validateSpot,
-    async (req, res, next) => {
-        const { address, city, state, country, lat, lng, name, description, price } = req.body
-        const ownerId = req.user.id
-        let newSpot = await Spot.create({
-            ownerId, address, city, state, country, lat, lng, name, description, price
-        })
-        res.status(201).json(newSpot)
-    })
 
 //add image to spot based on spot id
 router.post('/:spotId/images',
@@ -299,6 +292,20 @@ router.post('/:spotId/images',
         delete imageRes.spotId
         return res.status(201).json(imageRes)
     })
+
+
+    router.post('/',
+    requireAuth,
+    validateSpot,
+    async (req, res, next) => {
+        const { address, city, state, country, lat, lng, name, description, price } = req.body
+        const ownerId = req.user.id
+        let newSpot = await Spot.create({
+            ownerId, address, city, state, country, lat, lng, name, description, price
+        })
+        res.status(201).json(newSpot)
+    })
+
 
 //edit spot
 router.put('/:spotId',
