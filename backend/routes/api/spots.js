@@ -128,8 +128,12 @@ router.get('/:spotId/reviews',
 //get all spots
 router.get('/', async (req, res, _next) => {
     const query = req.query
-    console.log(query)
+
+    let size = query.size ? query.size : null;
+    let page = query.page ? query.page : 1
     let where = {}
+    console.log('size', size)
+    console.log('page', page)
 
     let spots = await Spot.findAll({
         where: where,
@@ -142,7 +146,8 @@ router.get('/', async (req, res, _next) => {
                 attributes: ['stars']
             }
         ],
-
+        offset: page,
+        limit: size
     })
 
     res.status(200).json({ Spots: formatter(spots) })

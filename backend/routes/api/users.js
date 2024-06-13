@@ -61,7 +61,6 @@ router.post(
     setTokenCookie(res, safeUser);
 
     return res.status(201).json({
-        message: `Succesfully created a new user`,
         user: safeUser
     })
 });
