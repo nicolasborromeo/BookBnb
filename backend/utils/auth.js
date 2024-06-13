@@ -113,21 +113,21 @@ const spotAuthentication = async (req, _res, next) => {
 
 
 
-const _properAuth = (userId, spotId) => {
-    if (userId !== spotId) {
-        let err = new Error()
-        err.status = 403
-        err.message = "Forbidden"
-        return next(err)
-    }
-}
+// const _properAuth = (userId, spotId) => {
+//     if (userId !== spotId) {
+//         let err = new Error()
+//         err.status = 403
+//         err.message = "Forbidden"
+//         return next(err)
+//     }
+// }
 
-const spotImage404 = () => {
-    let err = new Error('Not Found');
-    err.status = 404;
-    err.message = ("Spot Image couldn't be found")
-    return next(err)
-}
+// const spotImage404 = () => {
+//     let err = new Error('Not Found');
+//     err.status = 404;
+//     err.message = ("Spot Image couldn't be found")
+//     return next(err)
+// }
 
 //exporting everything
-module.exports = { setTokenCookie, restoreUser, requireAuth, spotAuthentication, _properAuth, spotImage404 };
+module.exports = { setTokenCookie, restoreUser, requireAuth, spotAuthentication };
