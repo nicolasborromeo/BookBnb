@@ -224,7 +224,7 @@ const validateSpotsQuery = [
         })
         .withMessage("Maximum longitude is invalid"),
     query("page")
-        .exists()
+        .optional()
         .notEmpty()
         .custom(value => {
             let page = parseInt(value)
@@ -235,7 +235,7 @@ const validateSpotsQuery = [
         })
         .withMessage("Page must be greater than or equal to 1"),
     query("size")
-        .exists()
+        .optional()
         .notEmpty()
         .custom(value => {
             let size = parseInt(value)

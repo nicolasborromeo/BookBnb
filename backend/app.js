@@ -90,7 +90,7 @@ app.use((err, _req, res, _next) => {
 
     let errorResponse ={}
 
-    if(err.status === 401 ){
+    if(err.status === 401 || err.status === 404 ){
         // title: err.title || 'Internal Server Error',
         errorResponse.message = err.message
         // errors: err.errors,
