@@ -92,7 +92,7 @@ app.use((err, _req, res, _next) => {
         // title: err.title || 'Internal Server Error',
         message: err.message,
         errors: err.errors,
-        stack: isProduction ? null : err.stack // isProduction = true? then set to null : else: send the stack trace only if we are in development
+        // stack: isProduction ? null : err.stack // isProduction = true? then set to null : else: send the stack trace only if we are in development
     });
 });
 

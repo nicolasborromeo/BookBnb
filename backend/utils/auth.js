@@ -106,6 +106,7 @@ const spotAuthentication = async (req, _res, next) => {
         let err = new Error()
         err.status = 403
         err.message = "Forbidden"
+        err.stack = null
         return next(err)
     }
     // req.spotId = spot.id -- YOU CAN ADD THE SPOT TO THE REQ IF NEEDED
