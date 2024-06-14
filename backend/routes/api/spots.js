@@ -4,7 +4,7 @@ const router = express.Router()
 const { Spot, SpotImage, Review, User, ReviewImage, Booking } = require('../../db/models');
 const { restoreUser, requireAuth, spotAuthentication } = require('../../utils/auth');
 const { handleValidationErrors } = require('../../utils/validation')
-const { check, body } = require('express-validator')
+const { check, body, query } = require('express-validator')
 const { Op } = require('sequelize')
 
 
@@ -125,33 +125,6 @@ router.get('/:spotId/reviews',
         res.status(200).json({ Reviews: spotReviews })
     })
 
-//get all spots
-router.get('/', async (req, res, _next) => {
-    const query = req.query
-
-    let size = query.size ? query.size : null;
-    let page = query.page ? query.page : 1
-    let where = {}
-    console.log('size', size)
-    console.log('page', page)
-
-    let spots = await Spot.findAll({
-        where: where,
-        include: [
-            {
-                model: SpotImage,
-                attributes: ['url', 'preview']
-            }, {
-                model: Review,
-                attributes: ['stars']
-            }
-        ],
-        offset: page,
-        limit: size
-    })
-
-    res.status(200).json({ Spots: formatter(spots) })
-})
 
 //get all spots owner by current user
 router.get('/current', restoreUser, requireAuth, async (req, res, next) => {
@@ -208,6 +181,115 @@ router.get('/:id', async (req, res, next) => {
     delete spot.Reviews
     res.status(200).json(spot)
 })
+
+const validateSpotsQuery = [
+    query("minLat")
+        .optional()
+        .custom(value => {
+            let lat = parseFloat(value)
+            if (isNaN(lat) || lat > 90) {
+                throw new Error()
+            }
+            return true
+        })
+        .withMessage("Minimum latitude is invalid"),
+    query("maxLat")
+        .optional()
+        .custom(value => {
+            let lat = parseFloat(value)
+            if (isNaN(lat) || lat < -90) {
+                throw new Error()
+            }
+            return true
+        })
+        .withMessage("Maximum latitude is invalid"),
+    query("minLng")
+        .optional()
+        .custom(value => {
+            let lng = parseFloat(value)
+            if (isNaN(lng) || lng < -180) {
+                throw new Error()
+            }
+            return true
+        })
+        .withMessage("Minimum longitude is invalid"),
+    query("maxLng")
+        .optional()
+        .custom(value => {
+            let lng = parseFloat(value)
+            if (isNaN(lng) || lng > 180) {
+                throw new Error()
+            }
+            return true
+        })
+        .withMessage("Maximum longitude is invalid"),
+    query("page")
+        .exists()
+        .notEmpty()
+        .custom(value => {
+            let page = parseInt(value)
+            if (isNaN(page) || page < 1) {
+                throw new Error()
+            }
+            return true
+        })
+        .withMessage("Page must be greater than or equal to 1"),
+    query("size")
+        .exists()
+        .notEmpty()
+        .custom(value => {
+            let size = parseInt(value)
+            if (isNaN(size) || size < 1 || size > 20) {
+                throw new Error()
+            }
+            return true
+        })
+        .withMessage("Size must be between 1 and 20"),
+    handleValidationErrors
+]
+
+//get all spots
+router.get('/', validateSpotsQuery, async (req, res, _next) => {
+    const query = req.query
+
+
+    let size = query.size ? parseInt(query.size) : null;
+    let page = query.page ? parseInt(query.page) : 1
+
+    let minLat = query.minLat ? parseFloat(query.minLat) : -90
+    let maxLat = query.maxLat ? parseFloat(query.maxLat) : 90
+    let minLng = query.minLng ? parseFloat(query.minLng) : -180
+    let maxLng = query.maxLng ? parseFloat(query.maxLng) : 180
+    let minPrice = query.minPrice ? parseFloat(query.minPrice) : 0
+    let maxPrice = query.maxPrice ? parseFloat(query.maxPrice) : 1000000
+    let lat = { [Op.between]: [minLat, maxLat] }
+    let lng = { [Op.between]: [minLng, maxLng] }
+    let price = { [Op.between]: [minPrice, maxPrice] }
+
+
+    let where = {
+        lat: lat,
+        lng: lng,
+        price: price
+    }
+    let spots = await Spot.findAll({
+        where: where,
+        include: [
+            {
+                model: SpotImage,
+                attributes: ['url', 'preview']
+            }, {
+                model: Review,
+                attributes: ['stars']
+            }
+        ],
+        offset: size * (page - 1),
+        limit: size
+    })
+
+    res.status(200).json({ Spots: formatter(spots) })
+})
+
 
 //create a spot
 const validateSpot = [
@@ -299,7 +381,7 @@ router.post('/:spotId/images',
     })
 
 
-    router.post('/',
+router.post('/',
     requireAuth,
     validateSpot,
     async (req, res, next) => {
