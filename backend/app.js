@@ -87,13 +87,22 @@ app.use((err, _req, _res, next) => {
 //FINAL ERROR FORMATER and response
 app.use((err, _req, res, _next) => {
     res.status(err.status || 500);
-    console.error(err);
-    res.json({
+
+    let errorResponse ={}
+
+    if(err.status === 401 ){
         // title: err.title || 'Internal Server Error',
-        message: err.message,
+        errorResponse.message = err.message
         // errors: err.errors,
         // stack: isProduction ? null : err.stack // isProduction = true? then set to null : else: send the stack trace only if we are in development
-    });
+    } else {
+        // title: err.title || 'Internal Server Error',
+        errorResponse.message = err.message
+        errorResponse.errors = err.errors
+        // stack: isProduction ? null : err.stack // isProduction = true? then set to null : else: send the stack trace only if we are in development
+    }
+
+    res.json(errorResponse);
 });
 
 module.exports = app;
