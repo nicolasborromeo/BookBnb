@@ -254,24 +254,25 @@ router.get('/', validateSpotsQuery, async (req, res, _next) => {
 
 
     let size = query.size ? parseInt(query.size) : null;
-    let page = query.page ? parseInt(query.page) : 1
+    let page = query.page ? parseInt(query.page) : 1;
 
-    let minLat = query.minLat ? parseFloat(query.minLat) : -90
-    let maxLat = query.maxLat ? parseFloat(query.maxLat) : 90
-    let minLng = query.minLng ? parseFloat(query.minLng) : -180
-    let maxLng = query.maxLng ? parseFloat(query.maxLng) : 180
-    let minPrice = query.minPrice ? parseFloat(query.minPrice) : 0
-    let maxPrice = query.maxPrice ? parseFloat(query.maxPrice) : 1000000
-    let lat = { [Op.between]: [minLat, maxLat] }
-    let lng = { [Op.between]: [minLng, maxLng] }
-    let price = { [Op.between]: [minPrice, maxPrice] }
+    let minLat = query.minLat ? parseFloat(query.minLat) : -90;
+    let maxLat = query.maxLat ? parseFloat(query.maxLat) : 90;
+    let minLng = query.minLng ? parseFloat(query.minLng) : -180;
+    let maxLng = query.maxLng ? parseFloat(query.maxLng) : 180;
+    let minPrice = query.minPrice ? parseFloat(query.minPrice) : 0;
+    let maxPrice = query.maxPrice ? parseFloat(query.maxPrice) : 1000000;
+    let lat = { [Op.between]: [minLat, maxLat] };
+    let lng = { [Op.between]: [minLng, maxLng] };
+    let price = { [Op.between]: [minPrice, maxPrice] };
 
 
     let where = {
         lat: lat,
         lng: lng,
         price: price
-    }
+    };
+
     let spots = await Spot.findAll({
         where: where,
         include: [
@@ -285,9 +286,9 @@ router.get('/', validateSpotsQuery, async (req, res, _next) => {
         ],
         offset: size * (page - 1),
         limit: size
-    })
+    });
 
-    res.status(200).json({ Spots: formatter(spots) })
+    res.status(200).json({ Spots: formatter(spots), page, size });
 })
 
 
