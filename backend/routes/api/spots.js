@@ -353,17 +353,36 @@ const validateSpot = [
         .exists()
         .notEmpty()
         .withMessage("Description is required"),
+
+    handleValidationErrors
+]
+
+const validatePricePOST = [
     body("price")
-        .exists()
-        .notEmpty().withMessage("Price per day is required")
-        .isNumeric().withMessage('Price must be a number')
-        .custom(value => {
-            if (value < 0) {
-                throw new Error()
-            }
-            return true
-        })
-        .withMessage("Price per day must be a positive number"),
+    .exists()
+    .notEmpty()..withMessage("Price per day is required")
+    .isNumeric().withMessage('Price must be a number')
+    .custom(value => {
+        if (value < 0) {
+            throw new Error()
+        }
+        return true
+    })
+    .withMessage("Price per day must be a positive number"),
+]
+
+const validatePricePUT = [
+    body("price")
+    .exists()
+    .notEmpty()
+    .isNumeric()
+    .custom(value => {
+        if (value < 0) {
+            throw new Error()
+        }
+        return true
+    })
+    .withMessage("Price per day is required"),
     handleValidationErrors
 ]
 
@@ -390,6 +409,7 @@ router.post('/:spotId/images',
 router.post('/',
     requireAuth,
     validateSpot,
+    validatePricePOST,
     async (req, res, next) => {
         const { address, city, state, country, lat, lng, name, description, price } = req.body
         const ownerId = req.user.id
@@ -405,6 +425,7 @@ router.put('/:spotId',
     requireAuth,
     spotAuthentication,
     validateSpot,
+    validatePricePUT,
     async (req, res, next) => {
         const id = req.params.spotId
         const { address, city, state, country, lat, lng, name, description, price } = req.body
