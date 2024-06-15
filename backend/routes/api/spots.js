@@ -287,8 +287,14 @@ router.get('/', validateSpotsQuery, async (req, res, _next) => {
         offset: size * (page - 1),
         limit: size
     });
+    let response = { Spots: formatter(spots) }
 
-    res.status(200).json({ Spots: formatter(spots), page, size });
+    if(query) {
+        response.page = page;
+        response.size = size
+    };
+
+    res.status(200).json(response);
 })
 
 
