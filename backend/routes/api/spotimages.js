@@ -14,7 +14,7 @@ router.delete('/:imageId', restoreUser, requireAuth, async (req, res, next) => {
         return next(err)
     }
     const spotId = spotImage.spotId
-    let spot = await Spot.findByPk(reviewId)
+    let spot = await Spot.findByPk(spotId)
 
 
     if (userId !== spot.userId) {
