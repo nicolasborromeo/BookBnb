@@ -371,8 +371,6 @@ const validateSpot = [
 router.post('/:spotId/images',
     requireAuth,
     spotAuthentication,
-    body("url").isURL().withMessage("Image must have a valid url"),
-    handleValidationErrors,
     async (req, res, next) => {
 
         const newImage = await SpotImage.create({
