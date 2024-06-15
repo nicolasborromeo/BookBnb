@@ -95,8 +95,9 @@ router.put('/:reviewId',
 
 
 router.post('/:reviewId/images',
-    requireAuth,
     _reviewExists,
+    requireAuth,
+    _reviewIsUsers,
     _maxImage,
     async (req, res, next) => {
         const reviewId = req.params.reviewId;
