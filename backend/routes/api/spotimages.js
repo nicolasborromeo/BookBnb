@@ -17,7 +17,7 @@ router.delete('/:imageId', restoreUser, requireAuth, async (req, res, next) => {
     let spot = await Spot.findByPk(spotId)
 
 
-    if (userId !== spot.userId) {
+    if (userId !== spot.ownerId) {
         let err = new Error()
         err.status = 403
         err.message = "Forbidden"
