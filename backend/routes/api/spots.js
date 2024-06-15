@@ -289,7 +289,7 @@ router.get('/', validateSpotsQuery, async (req, res, _next) => {
     });
     let response = { Spots: formatter(spots) }
 
-    if(query) {
+    if(Object.keys(query).length !== 0) {
         response.page = page;
         response.size = size
     };
