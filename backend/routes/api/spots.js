@@ -355,7 +355,7 @@ const validateSpot = [
         .withMessage("Description is required"),
     body("price")
         .exists()
-        .notEmpty()
+        .notEmpty().withMessage("Price per day is required")
         .isNumeric().withMessage('Price must be a number')
         .custom(value => {
             if (value < 0) {
