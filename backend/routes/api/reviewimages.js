@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-const { ReviewImage }= require('../../db/models')
+const { ReviewImage, Review }= require('../../db/models')
 const { requireAuth, restoreUser } = require('../../utils/auth')
 
 router.delete('/:imageId', restoreUser, requireAuth, async (req, res, next)=> {
@@ -15,8 +15,9 @@ router.delete('/:imageId', restoreUser, requireAuth, async (req, res, next)=> {
         return next(err)
     }
     const reviewId = reviewImage.reviewId
+    let review = await Review.findByPk(reviewId)
 
-    if (userId !== reviewId) {
+    if (userId !== review.userId) {
         let err = new Error()
         err.status = 403
         err.message = "Forbidden"
