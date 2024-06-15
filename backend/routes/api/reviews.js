@@ -13,8 +13,18 @@ const _reviewExists = async (req, res, next) => {
         err.status = 404;
         err.message = "Review couldn't be found"
         return next(err)
-    }
+    };
     return next()
+}
+
+const checkDuplicate = async (req, res, next) => {
+    let review = await Review.findByPk(req.params.reviewId)
+    if (review && (review.userId === req.user.id)) {
+        let err = new Error();
+        err.status = 500;
+        err.message = "User already has a review for this spot"
+        return next(err)
+    }
 }
 const _maxImage = async (req, res, next) => {
     let reviewImages = await ReviewImage.findAll({
@@ -81,6 +91,9 @@ router.put('/:reviewId',
         res.status(200).json(updatedReview)
     })
 
+
+
+
 router.post('/:reviewId/images',
     requireAuth,
     _reviewExists,
@@ -145,6 +158,11 @@ router.delete('/:reviewId',
             where: { id: req.params.reviewId }
         })
         res.status(200).json("Successfully deleted")
+    })
+
+    router.get('/', async (req, res, next)=> {
+        let reviews = await Review.findAll({})
+        res.json(reviews)
     })
 
 module.exports = router
