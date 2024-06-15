@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
   class ReviewImage extends Model {
 
     static associate(models) {
-      ReviewImage.belongsTo(models.Review, { foreignKey: "reviewId", onDelete: "CASCADE" })
+      ReviewImage.belongsTo(models.Review, { foreignKey: "reviewId", onDelete: "CASCADE", hooks: true })
     }
   }
   ReviewImage.init({
@@ -22,7 +22,8 @@ module.exports = (sequelize, DataTypes) => {
       references: {
         model: 'Reviews',
         key: 'id'
-      }
+      },
+      onDelete: 'CASCADE'
     },
     url: {
       type: DataTypes.STRING,
