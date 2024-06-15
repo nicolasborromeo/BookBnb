@@ -289,7 +289,7 @@ router.get('/', validateSpotsQuery, async (req, res, _next) => {
     });
     let response = { Spots: formatter(spots) }
 
-    if(Object.keys(query).length !== 0) {
+    if (Object.keys(query).length !== 0) {
         response.page = page;
         response.size = size
     };
@@ -353,38 +353,20 @@ const validateSpot = [
         .exists()
         .notEmpty()
         .withMessage("Description is required"),
-
+    body("price")
+        .exists()
+        .notEmpty()
+        .isNumeric()
+        .custom(value => {
+            if (value < 0) {
+                throw new Error()
+            }
+            return true
+        })
+        .withMessage("Price per day is required"),
     handleValidationErrors
 ]
 
-const validatePricePOST = [
-    body("price")
-    .exists()
-    .notEmpty()
-    .isNumeric().withMessage('Price must be a number')
-    .custom(value => {
-        if (value < 0) {
-            throw new Error()
-        }
-        return true
-    })
-    .withMessage("Price per day must be a positive number"),
-]
-
-const validatePricePUT = [
-    body("price")
-    .exists()
-    .notEmpty()
-    .isNumeric()
-    .custom(value => {
-        if (value < 0) {
-            throw new Error()
-        }
-        return true
-    })
-    .withMessage("Price per day is required"),
-    handleValidationErrors
-]
 
 //add image to spot based on spot id
 router.post('/:spotId/images',
@@ -409,7 +391,6 @@ router.post('/:spotId/images',
 router.post('/',
     requireAuth,
     validateSpot,
-    validatePricePOST,
     async (req, res, next) => {
         const { address, city, state, country, lat, lng, name, description, price } = req.body
         const ownerId = req.user.id
@@ -425,7 +406,6 @@ router.put('/:spotId',
     requireAuth,
     spotAuthentication,
     validateSpot,
-    validatePricePUT,
     async (req, res, next) => {
         const id = req.params.spotId
         const { address, city, state, country, lat, lng, name, description, price } = req.body
@@ -449,9 +429,9 @@ router.delete('/:spotId',
     spotAuthentication,
     async (req, res, next) => {
         const id = req.params.spotId
-        let spot = await Spot.findByPk(id, {include: {model: SpotImage}})
-        console.log(spot.toJSON())
-
+        // let spot = await Spot.findByPk(id, {include: {model: SpotImage}})
+        // console.log(spot.toJSON())
+        // let imageList = spot.toJSON().SpotImage.forEach(img => console.log(img))
         await Spot.destroy({
             where: { id: id }
         })
