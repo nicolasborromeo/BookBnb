@@ -10,37 +10,37 @@ if (process.env.NODE_ENV === 'production') {
 
 const spotImages = [
   {
-    id: 1,
+    // id: 1,
     spotId: 1,
     url: 'https://drive.google.com/file/d/15dAa19f6cFrFKPS5r2Q19Knjxy9vODLF/view?usp=sharing',
     preview: true
   },
   {
-    id: 2,
+    // id: 2,
     spotId: 2,
     url: 'https://drive.google.com/file/d/1iBh44ExwBHLbC3gMMWrRaQ10-iVSRDdZ/view?usp=sharing',
     preview: true
   },
   {
-    id: 3,
+    // id: 3,
     spotId: 3,
     url: 'https://drive.google.com/file/d/1HXrRxQUs73m_TJkBh9rBdgjhtlHTvonL/view?usp=sharing',
     preview: true
   },
   {
-    id: 4,
+    // id: 4,
     spotId: 4,
     url: 'https://drive.google.com/file/d/1qJGgdsCBKD1HwH7PUnjevUxRWpDZpirK/view?usp=sharing',
     preview: true
   },
   {
-    id: 5,
+    // id: 5,
     spotId: 5,
     url: 'https://drive.google.com/file/d/1mIx4ayCu2TcMl6P3QfVJEn3pMNLE4rRM/view?usp=sharing',
     preview: true
   },
   {
-    id: 6,
+    // id: 6,
     spotId: 4,
     url: 'https://drive.google.com/file/d/1jpzQxFg0Da9JQiO2aN3qyOGQ1I9tMChW/view?usp=sharing',
     preview: false
