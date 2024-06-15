@@ -54,7 +54,7 @@ const restoreUser = (req, res, next) => {
 
             req.user = await User.findByPk(id, {
                 attributes: {
-                    include: ['email', 'firstName', 'lastName'] //'createdAt', 'updatedAt'
+                    include: ['firstName', 'lastName', 'email', 'username'] //'createdAt', 'updatedAt'
                 }
             });
         } catch (e) {

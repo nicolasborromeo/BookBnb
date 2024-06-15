@@ -61,8 +61,18 @@ router.post('/', validateLogin, async (req, res, next) => {
 });
 
 
-router.get('/', restoreUser, async (req, res, _next) => {
-    res.status(200).json(req.user)
+router.get('/', async (req, res, _next) => {
+    if(!req.user) res.status(200).json({user: req.user})
+    if(req.user) {
+        let safeUser = {
+            id: req.user.id,
+            firstName: req.user.firstName,
+            lastName: req.user.lastName,
+            email: req.user.email,
+            username: req.user.username
+        };
+        res.status(200).json({user: safeUser})
+    }
 })
 
 
