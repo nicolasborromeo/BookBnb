@@ -122,7 +122,7 @@ router.get('/:spotId/reviews',
                 }]
         })
 
-        res.status(201).json({ Reviews: spotReviews })
+        res.status(200).json({ Reviews: spotReviews })
     })
 
 
