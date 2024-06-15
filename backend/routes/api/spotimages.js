@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { SpotImage }= require('../../db/models')
+const { SpotImage, Spot }= require('../../db/models')
 const { requireAuth, restoreUser, _properAuth, spotImage404 } = require('../../utils/auth')
 
 router.delete('/:imageId', restoreUser, requireAuth, async (req, res, next) => {
@@ -14,8 +14,10 @@ router.delete('/:imageId', restoreUser, requireAuth, async (req, res, next) => {
         return next(err)
     }
     const spotId = spotImage.spotId
+    let spot = await Spot.findByPk(reviewId)
 
-    if (userId !== spotId) {
+
+    if (userId !== spot.userId) {
         let err = new Error()
         err.status = 403
         err.message = "Forbidden"
