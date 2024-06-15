@@ -13,11 +13,11 @@ const validateLogin = [
     check('credential')
         .exists({checkFalsy: true})
         .notEmpty()
-        .withMessage('Please provide a valid email or username'),
+        .withMessage("Email or username is required"),
     check('password')
         .exists({checkfalse: true})
         .notEmpty()
-        .withMessage('Please provide a valid password'),
+        .withMessage( "Password is required"),
     handleValidationErrors
 ]
 
@@ -47,6 +47,8 @@ router.post('/', validateLogin, async (req, res, next) => {
 
     let safeUser = {
         id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
         email: user.email,
         username: user.username
     };
