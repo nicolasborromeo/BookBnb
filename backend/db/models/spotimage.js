@@ -10,16 +10,10 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      SpotImage.belongsTo(models.Spot, {foreignKey: 'spotId', onDelete: 'CASCADE'})
+      SpotImage.belongsTo(models.Spot, { foreignKey: 'spotId', onDelete: 'CASCADE' })
     }
   }
   SpotImage.init({
-    id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true,
-      autoIncrement: true
-    },
     spotId: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -27,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
         model: 'Spots',
         key: 'id'
       },
-      onDelete: "CASCADE"
+      onDelete: 'CASCADE'
     },
     url: {
       type: DataTypes.STRING,
