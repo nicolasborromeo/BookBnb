@@ -9,7 +9,6 @@ const { setTokenCookie, requireAuth, restoreUser } = require('../../utils/auth')
 const { User } = require('../../db/models');
 
 const validateSignup = [
-    userExists,
     check('email')
       .exists({ checkFalsy: true })
       .isEmail()
@@ -42,6 +41,7 @@ const validateSignup = [
 
 router.post(
     '/',
+    userExists,
     validateSignup,
     async (req, res) => {
 
