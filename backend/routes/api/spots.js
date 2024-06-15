@@ -360,7 +360,7 @@ const validateSpot = [
 const validatePricePOST = [
     body("price")
     .exists()
-    .notEmpty()..withMessage("Price per day is required")
+    .notEmpty()
     .isNumeric().withMessage('Price must be a number')
     .custom(value => {
         if (value < 0) {
@@ -449,6 +449,9 @@ router.delete('/:spotId',
     spotAuthentication,
     async (req, res, next) => {
         const id = req.params.spotId
+        let spot = await Spot.findByPk(id, {include: {model: SpotImage}})
+        console.log(spot.toJSON())
+
         await Spot.destroy({
             where: { id: id }
         })
