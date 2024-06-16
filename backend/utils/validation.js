@@ -29,9 +29,9 @@ const userExists = async (req, res, next) => {
     const {Op} = require('sequelize')
     const errors = {}
     let activeEmail = await User.findOne({where: {email: email}});
-    if(activeEmail) errors.email = 'email already exists'
+    if(activeEmail) errors.email = "User with that email already exists"
     let activeUsername = await User.findOne({where: {username: username}});
-    if(activeUsername) errors.username = 'username already exists'
+    if(activeUsername) errors.username = "User with that username already exists"
 
     if(activeEmail || activeUsername) {
         let err = new Error

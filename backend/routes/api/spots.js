@@ -293,6 +293,12 @@ router.get('/:id', async (req, res, next) => {
     }, 0)
     spot.numReviews = spot.Reviews.length
     spot.avgRating = sum / spot.numReviews
+    spot.Owner = {
+        id: spot.User.id,
+        firstName: spot.User.firstName,
+        lastName: spot.User.lastname
+    }
+    delete spot.User
     delete spot.Reviews
     res.status(200).json(spot)
 })
@@ -340,7 +346,6 @@ const validateSpotsQuery = [
         .withMessage("Maximum longitude is invalid"),
     query("page")
         .optional()
-        .notEmpty()
         .custom(value => {
             let page = parseInt(value)
             if (isNaN(page) || page < 1) {
@@ -351,7 +356,6 @@ const validateSpotsQuery = [
         .withMessage("Page must be greater than or equal to 1"),
     query("size")
         .optional()
-        .notEmpty()
         .custom(value => {
             let size = parseInt(value)
             if (isNaN(size) || size < 1 || size > 20) {
@@ -542,13 +546,11 @@ router.delete('/:spotId',
     spotAuthentication,
     async (req, res, next) => {
         const id = req.params.spotId
-        // let spot = await Spot.findByPk(id, {include: {model: SpotImage}})
-        // console.log(spot.toJSON())
-        // let imageList = spot.toJSON().SpotImage.forEach(img => console.log(img))
+
         await Spot.destroy({
             where: { id: id }
         })
-        res.status(200).json('Successfully deleted')
+        res.status(200).json({message: 'Successfully deleted'})
     });
 
 module.exports = router

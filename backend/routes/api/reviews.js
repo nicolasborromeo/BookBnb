@@ -153,12 +153,20 @@ router.get('/current', requireAuth, async (req, res, next) => {
 router.delete('/:reviewId',
     requireAuth,
     _reviewIsUsers,
-    _reviewExists,
     async (req, res, next) => {
+
+        let review = await Review.findByPk(req.params.reviewId)
+        if (!review) {
+            let err = new Error();
+            err.status = 404;
+            err.message = "Review couldn't be found"
+            return next(err)
+        };
+
         await Review.destroy({
             where: { id: req.params.reviewId }
         })
-        res.status(200).json("Successfully deleted")
+        res.status(200).json({message: "Successfully deleted"})
     })
 
     router.get('/', async (req, res, next)=> {
