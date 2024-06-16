@@ -114,10 +114,10 @@ const validateBooking = [
         .notEmpty()
         .custom((val, { req }) => {
             if (new Date(val) <= new Date(req.body.startDate)) {
-              throw new Error("endDate cannot be on or before startDate");
+                throw new Error("endDate cannot be on or before startDate");
             }
             return true;
-          }),
+        }),
     handleValidationErrors
 ]
 
@@ -135,7 +135,7 @@ router.post('/:spotId/bookings', requireAuth, validateBooking, async (req, res, 
         err.errors = { spot: 'Spot not found' }
         return next(err)
     }; //404
-    if(spot.ownerId === req.user.id) {
+    if (spot.ownerId === req.user.id) {
         let err = new Error()
         err.status = 403
         err.message = "Forbidden"
@@ -144,37 +144,35 @@ router.post('/:spotId/bookings', requireAuth, validateBooking, async (req, res, 
     }; //403
 
     //booking conflict
-    let spotBookings = await Booking.findAll({where: {spotId: spotId}})
-    let bookingList = []
+    let spotBookings = await Booking.findAll({ where: { spotId: spotId } })
+    let errors = {}
+    const newStartDate = new Date(startDate);
+    const newEndDate = new Date(endDate);
+
     spotBookings.forEach(booking => {
-        bookingList.push(booking.toJSON())
-    });
-    bookingList.forEach(booking => {
-        let errors = {}
         const bookingStartDate = new Date(booking.startDate);
         const bookingEndDate = new Date(booking.endDate);
-        const newStartDate = new Date(startDate);
-        const newEndDate = new Date(endDate);
 
-          if (newStartDate >= bookingStartDate && newStartDate <= bookingEndDate) {
-            errors.startDate = "Start date conflicts with an existing booking";
-          }
-          if (newEndDate >= bookingStartDate && newEndDate <= bookingEndDate) {
-            errors.endDate = "End date conflicts with an existing booking";
-          }
-          if (newStartDate <= bookingStartDate && newEndDate >= bookingEndDate) {
-            errors.startDate = "Start date conflicts with an existing booking";
-            errors.endDate = "End date conflicts with an existing booking";
-          }
-          if (Object.keys(errors).length > 0) {
-            let err = new Error('Booking conflict');
-            err.status = 403;
-            err.errors = errors;
-            err.message = "Sorry, this spot is already booked for the specified dates";
-            return next(err);
-          }
 
-      });
+        if (newStartDate >= bookingStartDate && newStartDate <= bookingEndDate) {
+            errors.startDate = "Start date conflicts with an existing booking";
+        }
+        if (newEndDate >= bookingStartDate && newEndDate <= bookingEndDate) {
+            errors.endDate = "End date conflicts with an existing booking";
+        }
+        if (newStartDate <= bookingStartDate && newEndDate >= bookingEndDate) {
+            errors.startDate = "Start date conflicts with an existing booking";
+            errors.endDate = "End date conflicts with an existing booking";
+        }
+    });
+
+    if (Object.keys(errors).length > 0) {
+        let err = new Error('Booking conflict');
+        err.status = 403;
+        err.errors = errors;
+        err.message = "Sorry, this spot is already booked for the specified dates";
+        return next(err);
+    }
 
 
     let newBooking = await Booking.create({
@@ -348,8 +346,8 @@ const validateSpotsQuery = [
         .optional()
         .custom(value => {
             let page = parseInt(value)
-            if(isNaN(page)) page = 1
-            if ( page && page < 1) {
+            if (isNaN(page)) page = 1
+            if (page && page < 1) {
                 throw new Error()
             }
             return true
@@ -359,7 +357,7 @@ const validateSpotsQuery = [
         .optional()
         .custom(value => {
             let size = parseInt(value)
-            if(isNaN(size)) size = 20
+            if (isNaN(size)) size = 20
             if (size && (size < 1 || size > 20)) {
                 throw new Error()
             }
@@ -552,7 +550,7 @@ router.delete('/:spotId',
         await Spot.destroy({
             where: { id: id }
         })
-        res.status(200).json({message: 'Successfully deleted'})
+        res.status(200).json({ message: 'Successfully deleted' })
     });
 
 module.exports = router
