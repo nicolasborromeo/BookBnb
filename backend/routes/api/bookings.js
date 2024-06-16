@@ -3,6 +3,7 @@ const router = require('express').Router();
 const { Spot, Booking, SpotImage } = require('../../db/models')
 const { requireAuth } = require('../../utils/auth')
 const { handleValidationErrors } = require('../../utils/validation')
+const { body } = require('express-validator')
 
 router.get('/current', requireAuth, async (req, res, next) => {
     let userId = req.user.id
