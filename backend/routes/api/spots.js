@@ -348,6 +348,7 @@ const validateSpotsQuery = [
         .optional()
         .custom(value => {
             let page = parseInt(value)
+            if(isNaN(page)) page = 1
             if ( page && page < 1) {
                 throw new Error()
             }
@@ -358,6 +359,7 @@ const validateSpotsQuery = [
         .optional()
         .custom(value => {
             let size = parseInt(value)
+            if(isNaN(size)) size = 20
             if (size && (size < 1 || size > 20)) {
                 throw new Error()
             }
@@ -372,7 +374,7 @@ router.get('/', validateSpotsQuery, async (req, res, _next) => {
     const query = req.query
 
 
-    let size = query.size ? parseInt(query.size) : null;
+    let size = query.size ? parseInt(query.size) : 20;
     let page = query.page ? parseInt(query.page) : 1;
 
     let minLat = query.minLat ? parseFloat(query.minLat) : -90;
