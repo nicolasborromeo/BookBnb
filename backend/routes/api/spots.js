@@ -109,6 +109,13 @@ const validateBooking = [
         .exists()
         .notEmpty()
         .withMessage("Start date cannot be empty"),
+    body('startDate')
+        .custom(val => {
+            if(new Date(val) < new Date()) {
+                throw new Error("startDate cannot be in the past");
+            }
+            return true
+        }),
     body('endDate')
         .exists()
         .notEmpty()
@@ -148,6 +155,15 @@ router.post('/:spotId/bookings', requireAuth, validateBooking, async (req, res, 
     let errors = {}
     const newStartDate = new Date(startDate);
     const newEndDate = new Date(endDate);
+    const today = new Date()
+
+    // if(newStartDate < today || newEndDate < today) {
+    //     let err = new Error()
+    //     err.status = 403
+    //     err.message = "Dates cannot be in the past"
+    //     err.stack = null
+    //     return next(err)
+    // }
 
     spotBookings.forEach(booking => {
         const bookingStartDate = new Date(booking.startDate);
