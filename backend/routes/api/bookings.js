@@ -39,7 +39,7 @@ router.get('/current', requireAuth, async (req, res, next) => {
 const validateBooking = [
     body('startDate')
         .custom(val => {
-            if(new Date(val) < new Date()) {
+            if (new Date(val) < new Date()) {
                 throw new Error("startDate cannot be in the past");
             }
             return true
@@ -56,7 +56,7 @@ const validateBooking = [
     handleValidationErrors
 ]
 
-router.put('/:bookingId', requireAuth, validateBooking, async(req, res, next)=> {
+router.put('/:bookingId', requireAuth, validateBooking, async (req, res, next) => {
     const booking = await Booking.findByPk(req.params.bookingId);
 
     if (!booking) {
@@ -119,6 +119,10 @@ router.put('/:bookingId', requireAuth, validateBooking, async(req, res, next)=> 
     let editBooking = await Booking.update({
         startDate: newStartDate,
         endDate: newEndDate
+    }, {
+        where: {
+            id: req.params.bookingId
+        }
     });
 
     res.status(200).json(editBooking)
@@ -152,7 +156,7 @@ router.delete('/:bookingId', requireAuth, async (req, res, next) => {
         return next(err)
     };
 
-    await Booking.destroy({where: {id: req.params.bookingId}})
+    await Booking.destroy({ where: { id: req.params.bookingId } })
 
 
     res.status(200).json({ message: "Successfully deleted" })
