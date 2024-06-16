@@ -149,8 +149,8 @@ router.post('/:spotId/bookings', requireAuth, validateBooking, async (req, res, 
     spotBookings.forEach(booking => {
         bookingList.push(booking.toJSON())
     });
-    let errors = {}
     bookingList.forEach(booking => {
+        let errors = {}
         const bookingStartDate = new Date(booking.startDate);
         const bookingEndDate = new Date(booking.endDate);
         const newStartDate = new Date(startDate);
@@ -162,10 +162,10 @@ router.post('/:spotId/bookings', requireAuth, validateBooking, async (req, res, 
           if (newEndDate >= bookingStartDate && newEndDate <= bookingEndDate) {
             errors.endDate = "End date conflicts with an existing booking";
           }
-        //   if (newStartDate <= bookingStartDate && newEndDate >= bookingEndDate) {
-        //     errors.startDate = "Start date conflicts with an existing booking";
-        //     errors.endDate = "End date conflicts with an existing booking";
-        //   }
+          if (newStartDate <= bookingStartDate && newEndDate >= bookingEndDate) {
+            errors.startDate = "Start date conflicts with an existing booking";
+            errors.endDate = "End date conflicts with an existing booking";
+          }
           if (Object.keys(errors).length > 0) {
             let err = new Error('Booking conflict');
             err.status = 403;
