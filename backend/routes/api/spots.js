@@ -348,7 +348,7 @@ const validateSpotsQuery = [
         .optional()
         .custom(value => {
             let page = parseInt(value)
-            if (isNaN(page) || page < 1) {
+            if ( page && page < 1) {
                 throw new Error()
             }
             return true
@@ -358,7 +358,7 @@ const validateSpotsQuery = [
         .optional()
         .custom(value => {
             let size = parseInt(value)
-            if (isNaN(size) || size < 1 || size > 20) {
+            if (size && (size < 1 || size > 20)) {
                 throw new Error()
             }
             return true
