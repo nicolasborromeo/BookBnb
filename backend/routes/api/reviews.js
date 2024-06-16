@@ -152,6 +152,7 @@ router.get('/current', requireAuth, async (req, res, next) => {
 
 router.delete('/:reviewId',
     requireAuth,
+    _reviewExists,
     _reviewIsUsers,
     async (req, res, next) => {
 

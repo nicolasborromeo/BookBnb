@@ -296,11 +296,11 @@ router.get('/:id', async (req, res, next) => {
     spot.Owner = {
         id: spot.User.id,
         firstName: spot.User.firstName,
-        lastName: spot.User.lastname
-    }
-    delete spot.User
-    delete spot.Reviews
-    res.status(200).json(spot)
+        lastName: spot.User.lastName,
+    };
+    delete spot.User;
+    delete spot.Reviews;
+    res.status(200).json(spot);
 })
 
 const validateSpotsQuery = [
