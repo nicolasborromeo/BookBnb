@@ -414,7 +414,7 @@ router.post('/:spotId/bookings', requireAuth, validateBooking, async (req, res, 
 
 
     let newBooking = await Booking.create({
-        spotId,
+        spotId: Number(spotId),
         userId,
         startDate,
         endDate

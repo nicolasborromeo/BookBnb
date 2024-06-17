@@ -58,7 +58,6 @@ const validateBooking = [
 
 router.put('/:bookingId', requireAuth, validateBooking, async (req, res, next) => {
     const booking = await Booking.findByPk(req.params.bookingId);
-
     if (!booking) {
         let err = new Error('Not Found')
         err.status = 404
@@ -95,7 +94,7 @@ router.put('/:bookingId', requireAuth, validateBooking, async (req, res, next) =
         const bookingStartDate = new Date(booking.startDate);
         const bookingEndDate = new Date(booking.endDate);
 
-        if (booking.id !== req.params.bookingId) {
+        if (Number(booking.id) != Number(req.params.bookingId)) {
             if (newStartDate >= bookingStartDate && newStartDate <= bookingEndDate) {
                 errors.startDate = "Start date conflicts with an existing booking";
             }
