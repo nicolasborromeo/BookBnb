@@ -95,8 +95,8 @@ router.put('/:reviewId',
 
 
 router.post('/:reviewId/images',
-    _reviewExists,
     requireAuth,
+    _reviewExists,
     _reviewIsUsers,
     _maxImage,
     async (req, res, next) => {
