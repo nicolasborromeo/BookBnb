@@ -125,8 +125,8 @@ router.put('/:bookingId', requireAuth, validateBooking, async (req, res, next) =
         }
     });
 
-    let res = await Booking.findByPk(req.params.bookingId);
-    res.status(200).json(res)
+    let response = await Booking.findByPk(req.params.bookingId);
+    res.status(200).json(response)
 });
 
 
