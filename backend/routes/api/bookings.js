@@ -116,7 +116,7 @@ router.put('/:bookingId', requireAuth, validateBooking, async (req, res, next) =
         return next(err);
     };
 
-    let editBooking = await Booking.update({
+    await Booking.update({
         startDate: newStartDate,
         endDate: newEndDate
     }, {
@@ -125,7 +125,8 @@ router.put('/:bookingId', requireAuth, validateBooking, async (req, res, next) =
         }
     });
 
-    res.status(200).json(editBooking)
+    let res = await Booking.findByPk(req.params.bookingId);
+    res.status(200).json(res)
 });
 
 
